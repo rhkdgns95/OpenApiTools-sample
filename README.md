@@ -5,9 +5,13 @@
 ### Command
 - yarn openapi-generator-cli generate -i `$_DOC` -g `$_LANG` -o `$_OUTDIR`  `$_OTHER_OPTIONS...`
 ```bash
-# typescript-node
+# Typescript Node
 yarn openapi-generator-cli generate -i http://localhost:3001/public/apidoc-json -g typescript-node -o ./sample-typescript-node --skip-validate-spec
+
+# Java
 yarn openapi-generator-cli generate -i http://localhost:3001/public/apidoc-json -g java -o ./sample-java --skip-validate-spec
+
+# PHP
 yarn openapi-generator-cli generate -i http://localhost:3001/public/apidoc-json -g php -o ./sample-php --skip-validate-spec
 ```
 
