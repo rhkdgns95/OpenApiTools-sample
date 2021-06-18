@@ -1,0 +1,6377 @@
+openapi: 3.0.0
+info:
+  contact: {}
+  description: '뱅크다K 웹앱 REST API : 관리자, 장부사, 고객사'
+  title: 뱅크다K 웹앱 REST API
+  version: 0.5.2
+servers:
+- url: /
+paths:
+  /public/api/adjust:
+    get:
+      description: 정산내역 목록을 검색한다
+      operationId: AdjustController_searchChargeJangbus
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사 순번
+        explode: true
+        in: query
+        name: jangbuId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 정산연월 (YYYYMM)
+        explode: true
+        in: query
+        name: yearMonth
+        required: false
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChargeJangbusOutput'
+          description: '성공 : 전체 장부사 정산내역 목록을 반환'
+      security:
+      - bearer: []
+      summary: 정산내역 목록 검색 (관리자 전용)
+      tags:
+      - 정산정보
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}:
+    get:
+      description: (특정 장부사의) 특정 정산목록을 검색한다
+      operationId: AdjustController_searchChargeJangbuFromJangbu
+      parameters:
+      - description: 장부사 순번
+        example: 3
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 정산연월 (YYYYMM)
+        explode: true
+        in: query
+        name: yearMonth
+        required: false
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChargeJangbusOutput'
+          description: '성공 : 장부사별 정산내역 목록 반환'
+      security:
+      - bearer: []
+      summary: (특정 장부사의) 정산목록 검색 (장부사 전용)
+      tags:
+      - 정산정보
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}:
+    get:
+      description: 특정 장부사의 특정연월에 해당하는 서비스별 단가를 검색한다
+      operationId: AdjustController_searchAdjustJangbuServices
+      parameters:
+      - description: 장부사 순번
+        example: 3
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        example: 202103
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchAdjustJangbuServicesOutput'
+          description: '성공 : 장부사 서비스별 단가목록 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 존재하지 않은 정산내역 혹은 (장부사만 해당함) 해당 정산내역이 미완료 상태인 경우
+      security:
+      - bearer: []
+      summary: 장부사 서비스별 단가 검색 (장부사,관리자 전용)
+      tags:
+      - 정산정보
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/service/{serviceId}:
+    get:
+      description: 장부사 특정 서비스 회원별 요금목록을 검색한다
+      operationId: AdjustController_searchChargeJangbuUserServices
+      parameters:
+      - description: 장부사 순번
+        example: 3
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        example: 202103
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 서비스 순번
+        example: 3
+        explode: false
+        in: path
+        name: serviceId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchChargeJangbuUserServicesOutput'
+          description: '성공 : 장부사 서비스 회원별 요금목록 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 존재하지 않은 정산내역 혹은 (장부사만 해당함) 해당 정산내역이 미완료 상태인 경우
+      security:
+      - bearer: []
+      summary: 장부사 특정 서비스 회원별 요금목록 검색 (장부사,관리자 전용)
+      tags:
+      - 정산정보
+      x-accepts: application/json
+    patch:
+      description: (해당연월) 장부사 특정 서비스 단가를 수정한다.
+      operationId: AdjustController_updateAdjustJangbuService
+      parameters:
+      - explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: false
+        in: path
+        name: serviceId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAdjustJangbuServiceInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdjustJangbuService'
+          description: (수정된) 해당연월 장부사 특정 서비스 단가를 반환
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 장부사 서비스별 단가내역이 존재하지 않는 경우
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 이미 장부사에게 공개된 정산내역의 경우
+      security:
+      - bearer: []
+      summary: (해당연월) 장부사 특정 서비스 단가를 수정
+      tags:
+      - 정산정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/partnership:
+    get:
+      description: (해당연월) 장부사의 파트너쉽 금액을 조회한다.
+      operationId: AdjustController_getChargeJangbuPartnership
+      parameters:
+      - explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeJangbuPartnership'
+          description: (해당연월) 장부사의 파트너쉽 금액정보를 반환
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사 파트너쉽 금액정보가 없는 경우
+      security:
+      - bearer: []
+      summary: (해당연월) 장부사의 파트너쉽 금액 조회
+      tags:
+      - 정산정보
+      x-accepts: application/json
+    patch:
+      description: (해당연월) 장부사의 파트너쉽 금액을 수정한다.
+      operationId: AdjustController_updateChargeJangbuPartnership
+      parameters:
+      - explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChargeJangbuPartnershipInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeJangbuPartnership'
+          description: (수정된) 장부사의 파트너쉽 금액정보를 반환
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사 파트너쉽 금액정보가 없는 경우
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 이미 장부사에게 공개된 정산내역의 경우
+      security:
+      - bearer: []
+      summary: (해당연월) 장부사의 파트너쉽 금액 수정
+      tags:
+      - 정산정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/paid:
+    patch:
+      description: 정산내역의 수납여부를 업데이트 한다
+      operationId: AdjustController_updateChargeJangbuPaid
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChargeJangbuPaidInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeJangbu'
+          description: '성공 : 업데이트된 정산내역 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 정산내역이 존재하지 않음
+      security:
+      - bearer: []
+      summary: '정산내역 수납여부 업데이트 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 정산정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/status:
+    patch:
+      description: 정산내역의 비공개 → 공개 상태값을 업데이트 및 정산내역의 메일을 발송한다
+      operationId: AdjustController_updateChargeJangbuStatus
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateChargeJangbuStatusInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeJangbu'
+          description: '성공 : 업데이트된 정산내역 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 정산내역이 존재하지 않음
+      security:
+      - bearer: []
+      summary: '정산내역 비공개 → 공개 상태값 업데이트 및 정산내역 메일 발송 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 정산정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/step/{step}:
+    put:
+      description: 정산을 등록한다 (1,2 단계 순차적으로 진행)
+      operationId: AdjustController_registerAdjust
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 단계 순번
+        explode: false
+        in: path
+        name: step
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterAdjustOutput'
+          description: '성공 : 삭제후 재등록된 정산내역 정보를 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 잘못된 정산등록 단계를 입력한 경우
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않거나 과금대상이 아닌경우 또는 (Step2의 경우)해당연월의 장부사 서비스별 단가목록이
+            존재하지 않음.
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 이미 장부사에게 공개된 정산내역은 재등록이 불가능
+      security:
+      - bearer: []
+      summary: '정산 등록 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 정산정보
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/preview:
+    get:
+      description: 해당연월의 장부사 정산내역 결과 미리보기
+      operationId: AdjustController_getChargeJangbuPreview
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetChargeJangbuPreviewOutput'
+          description: 해당연월 정산내역 미리보기 HTML내용 반환
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사 또는 장부사 회원 또는 정산내역 또는 파트너쉽 정보를 찾을 수 없는경우
+      security:
+      - bearer: []
+      tags:
+      - 정산정보
+      x-accepts: application/json
+  /public/api/adjust/jangbu/{jangbuId}/yearMonth/{yearMonth}/testmail:
+    post:
+      description: 해당연월의 정산내역 결과 테스트 메일 전송
+      operationId: AdjustController_sendChargeJangbuMailTest
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 해당연월 (YYYYMM)
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendChagreJangbuMailTestInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendChargeJangbuMailTestOutput'
+          description: 해당연월의 정산내역 결과 테스트 메일을 전송한다
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사 또는 장부사 회원 또는 정산내역 또는 파트너쉽 정보를 찾을 수 없는경우
+      security:
+      - bearer: []
+      tags:
+      - 정산정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/api-monitor:
+    get:
+      description: API모니터링 목록을 검색한다
+      operationId: ApiMonitorController_getApiMonitors
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 시작일시 (YYYYMMDDHHmm)
+        example: "202104280000"
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 종료일시 (YYYYMMDDHHmm)
+        example: "202105260129"
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 장부사 순번
+        explode: true
+        in: query
+        name: jangbuId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 서비스 이름
+        explode: true
+        in: query
+        name: serviceName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 회원 순번
+        explode: true
+        in: query
+        name: userSeq
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 회원 ID
+        explode: true
+        in: query
+        name: uid
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: api 순번
+        explode: true
+        in: query
+        name: apiSeq
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 결과 응답코드
+        explode: true
+        in: query
+        name: rcode
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 실패여부
+        explode: true
+        in: query
+        name: isFail
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetApiMonitorsOutput'
+          description: '성공 : API모니터링 목록을 반환'
+      security:
+      - bearer: []
+      summary: API모니터링 목록 검색 (관리자 전용)
+      tags:
+      - API모니터링정보
+      x-accepts: application/json
+  /public/api/api-monitor/detail/{apiId}:
+    get:
+      description: 특정 API모니터링을 조회한다
+      operationId: ApiMonitorController_getApiMonitor
+      parameters:
+      - description: API모니터링 순번
+        explode: false
+        in: path
+        name: apiId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiLog'
+          description: '성공 : API모니터링 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 존재하지 않는 API모니터링 정보'
+      security:
+      - bearer: []
+      summary: API모니터링 조회 (관리자 전용)
+      tags:
+      - API모니터링정보
+      x-accepts: application/json
+  /public/api/api-monitor/log:
+    get:
+      description: API모니터링 S3 데이터를 조회한다
+      operationId: ApiMonitorController_getApiS3Data
+      parameters:
+      - description: S3 경로
+        explode: true
+        in: query
+        name: path
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: '성공 : API모니터링 S3 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 존재하지 않는 S3 경로'
+      security:
+      - bearer: []
+      summary: API모니터링 S3 데이터 조회 (관리자 전용)
+      tags:
+      - API모니터링정보
+      x-accepts: application/json
+  /public/api/auth:
+    post:
+      description: 새로운 토큰을 발급한다
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+        description: 로그인 요청 데이터
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOutput'
+          description: '성공 : 새 토큰을 발급'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 패스워드가 일치하지 않음
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 아이디를 갖는 사용자가 존재하지 않음
+      summary: 토큰발급
+      tags:
+      - 인증정보
+      x-contentType: application/json
+      x-accepts: application/json
+    put:
+      description: 토큰을 갱신한다
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshInput'
+        description: 토큰갱신 요청 데이터
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshOutput'
+          description: '성공 : 토큰을 갱신'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 존재하지 않는 토큰의 경우 또는 유효하지 않거나 만료된 토큰의 경우 또는 회원정보가 유효하지 않은경우
+      summary: 토큰갱신
+      tags:
+      - 인증정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/auth/{refreshToken}:
+    delete:
+      description: 토큰을 삭제한다 (로그아웃시)
+      operationId: AuthController_deleteToken
+      parameters:
+      - description: 리프레시 토큰
+        explode: false
+        in: path
+        name: refreshToken
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: '성공 : 토큰을 삭제'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 리프레시 토큰이 존재하지 않는 경우
+      summary: 로그아웃 (토큰삭제)
+      tags:
+      - 인증정보
+      x-accepts: application/json
+  /public/api/error:
+    get:
+      description: 에러 목록을 검색한다
+      operationId: ErrorController_getErrors
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 시작일시 (YYYYMMDDHHmm)
+        example: "202104280000"
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 종료일시 (YYYYMMDDHHmm)
+        example: "202105260129"
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: 앱 버전
+        explode: true
+        in: query
+        name: appVersion
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 앱 이름
+        explode: true
+        in: query
+        name: appName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사명
+        explode: true
+        in: query
+        name: jangbuName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 회원의 순번
+        explode: true
+        in: query
+        name: userId
+        required: false
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetErrorsResponse'
+          description: '성공 : 에러목록을 반환'
+      security:
+      - bearer: []
+      summary: 에러 목록 검색 (관리자 전용)
+      tags:
+      - 에러정보
+      x-accepts: application/json
+  /public/api/error/{errorId}:
+    get:
+      description: 특정 에러를 조회한다
+      operationId: ErrorController_getError
+      parameters:
+      - description: 에러 순번
+        explode: false
+        in: path
+        name: errorId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PcClientError'
+          description: '성공 : 에러정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 PC클라이언트 에러가 존재하지 않음
+      security:
+      - bearer: []
+      summary: 에러 조회 (관리자 전용)
+      tags:
+      - 에러정보
+      x-accepts: application/json
+  /public/api/error/{errorId}/cert:
+    get:
+      description: 특정 인증서를 조회한다
+      operationId: ErrorController_getCert
+      parameters:
+      - description: 에러 순번
+        explode: false
+        in: path
+        name: errorId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 연결정보 순번
+        explode: true
+        in: query
+        name: connectId
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: S3 경로
+        explode: true
+        in: query
+        name: path
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCertOutput'
+          description: '성공 : 인증서정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 connectId의 인증서가 존재하지 않거나 DB에 Connect 정보가 존재하지 않음
+      security:
+      - bearer: []
+      summary: '인증서 조회 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 에러정보
+      x-accepts: application/json
+  /public/api/jangbu:
+    get:
+      description: 장부사 목록을 검색한다
+      operationId: JangbuController_getJangbus
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 순번 목록
+        explode: true
+        in: query
+        name: serviceIds
+        required: false
+        schema:
+          items:
+            type: number
+          type: array
+        style: form
+      - description: 장부사명
+        explode: true
+        in: query
+        name: jangbuName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사 아이디
+        explode: true
+        in: query
+        name: repId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJangbusOutput'
+          description: '성공 : 장부사 목록을 반환'
+      security:
+      - bearer: []
+      summary: 장부사 목록 검색 (관리자 전용)
+      tags:
+      - 장부사정보
+      x-accepts: application/json
+    post:
+      description: 장부사를 등록한다
+      operationId: JangbuController_registerJangbu
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterJangbuInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jangbu'
+          description: '성공 : 등록된 장부사를 반환'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 중복된 장부사명이 존재 또는 중복된 로그인 아이디
+      security:
+      - bearer: []
+      summary: 장부사 등록 (관리자 전용)
+      tags:
+      - 장부사정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/jangbu/{jangbuId}:
+    get:
+      description: 특정 장부사를 조회한다
+      operationId: JangbuController_getJangbu
+      parameters:
+      - description: 장부사의 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jangbu'
+          description: '성공 : 특정 장부사를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 장부사가 존재하지 않음
+      security:
+      - bearer: []
+      summary: 장부사 조회 (관리자 전용)
+      tags:
+      - 장부사정보
+      x-accepts: application/json
+    patch:
+      description: 특정 장부사를 수정한다
+      operationId: JangbuController_updateJangbu
+      parameters:
+      - description: 장부사의 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateJangbuInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jangbu'
+          description: '성공 : 수정된 장부사를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 장부사가 존재하지 않음
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사명이 중복되는 경우
+      security:
+      - bearer: []
+      summary: 장부사 수정 (관리자 전용)
+      tags:
+      - 장부사정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/jangbu/yearMonth/{yearMonth}:
+    get:
+      description: (특정연월의 파트너쉽 단가정보와) 장부사 검색한다
+      operationId: JangbuController_getJangbusWithChargeJangbuPartnership
+      parameters:
+      - description: 해당연월
+        explode: false
+        in: path
+        name: yearMonth
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 순번 목록
+        explode: true
+        in: query
+        name: serviceIds
+        required: false
+        schema:
+          items:
+            type: number
+          type: array
+        style: form
+      - description: 장부사명
+        explode: true
+        in: query
+        name: jangbuName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사 아이디
+        explode: true
+        in: query
+        name: repId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJangbusOutput'
+          description: '성공 : 장부사 목록을 반환'
+      security:
+      - bearer: []
+      summary: (특정연월의 파트너쉽 단가정보와) 장부사 검색 (관리자 전용)
+      tags:
+      - 장부사정보
+      x-accepts: application/json
+  /public/api/member:
+    get:
+      description: 회원 목록을 검색한다
+      operationId: MemberController_getMembers
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사 순번 (관리자의 경우에만 입력)
+        explode: true
+        in: query
+        name: jangbuId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 서비스 순번
+        explode: true
+        in: query
+        name: serviceId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 이용여부 (1:이용중, 0:이용중지)
+        explode: true
+        in: query
+        name: active
+        required: false
+        schema:
+          enum:
+          - "0"
+          - "1"
+          type: string
+        style: form
+      - description: 회원명
+        explode: true
+        in: query
+        name: userName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 대표자명
+        explode: true
+        in: query
+        name: ceoName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 회원레벨 (고객,장부사,관리자)
+        example: 2
+        explode: true
+        in: query
+        name: userLevel
+        required: false
+        schema:
+          enum:
+          - 3
+          - 1
+          - 2
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMembersOutput'
+          description: '성공 : 회원목록을 반환'
+      security:
+      - bearer: []
+      summary: 회원 목록 검색
+      tags:
+      - 회원정보
+      x-accepts: application/json
+    post:
+      description: (관리자 또는 장부사) 계정을 등록한다 (관라지만 이용)
+      operationId: MemberController_registerMember
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterMemberInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 등록된 계정정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: (장부사 회원 등록시에만) 장부사가 존재하지 않는경우
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 중복된 로그인 아이디의 경우
+      security:
+      - bearer: []
+      summary: (관리자 또는 장부사) 계정 등록 (관라지만 이용)
+      tags:
+      - 회원정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/member/{userId}:
+    get:
+      description: 특정 회원을 조회한다
+      operationId: MemberController_getMember
+      parameters:
+      - description: 회원의 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 회원정보 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 id의 회원이 존재하지 않음
+      security:
+      - bearer: []
+      summary: 회원 조회
+      tags:
+      - 회원정보
+      x-accepts: application/json
+    patch:
+      description: 계정을 수정한다
+      operationId: MemberController_updateMember
+      parameters:
+      - description: 회원의 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemberInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 수정된 계정정보륿 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 id의 회원이 존재하지 않음
+      security:
+      - bearer: []
+      summary: 계정 수정
+      tags:
+      - 회원정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/member/find/account:
+    post:
+      description: (로그인 계정의) 아이디 또는 패스워드를 찾는다
+      operationId: MemberController_findMember
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindMemberInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindMemberOutput'
+          description: '성공 : 아이디(아이디 찾기) 또는 패스워드(패스워드 찾기)'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 이름, ID, 이메일이 올바르지 않음'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 해당 아이디를 갖는 사용자가 존재하지 않음'
+      summary: 아이디 찾기 또는 패스워드 찾기
+      tags:
+      - 회원정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/member/recover/{recoveryKey}:
+    get:
+      description: 패스워드 재설정 정보를 조회한다
+      operationId: MemberController_getResetPassword
+      parameters:
+      - explode: false
+        in: path
+        name: recoveryKey
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recovery'
+          description: '성공 : 비밀번호 초기화 정보 반환'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 초기화 키 만료기간이 지난 경우
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 해당 키가 존재하지 않음'
+      summary: 패스워드 재설정 조회
+      tags:
+      - 회원정보
+      x-accepts: application/json
+    patch:
+      description: (계정찾기진행시) 패스워드 재설정 정보를 처리한다
+      operationId: MemberController_resetPassword
+      parameters:
+      - description: 키값
+        explode: false
+        in: path
+        name: recoveryKey
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordOutput'
+          description: '성공 : 패스워드 재설정 처리이후 로그인하는 페이지로 이동'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 초기화 키 만료기간이 지난 경우
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 해당 키가 존재하지 않음'
+      summary: (계정찾기진행시) 패스워드 재설정 처리
+      tags:
+      - 회원정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/member/user:
+    post:
+      description: (고객사) 계정을 등록한다
+      operationId: MemberController_registerCustomer
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCustomerInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 등록된 계정정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않는경우
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 중복된 로그인 아이디의 경우
+      security:
+      - bearer: []
+      summary: (고객사) 계정 등록
+      tags:
+      - 회원정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/member/{userId}/role/{roleGroupCode}:
+    patch:
+      description: 특정 계정의 권한그룹을 저장한다
+      operationId: MemberController_saveUserRoleGroup
+      parameters:
+      - description: 계정의 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 계좌코드 순번
+        explode: false
+        in: path
+        name: roleGroupCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 계정정보륿 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 게정이 존재하지 않거나 특정 권한그룹목록이 존재하지 않는경우
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 권한그룹이 활성화되어있지 않거나 계정과 권한그룹의 레벨이 다른경우
+      security:
+      - bearer: []
+      summary: 계정의 권한그룹 저장
+      tags:
+      - 회원정보
+      x-accepts: application/json
+  /public/api/member/{memberId}/reset:
+    patch:
+      description: 아이디+이메일 조합으로 패스워드를 초기화한다
+      operationId: MemberController_resetPasswordWithIdEmail
+      parameters:
+      - description: 회원의 순번
+        explode: false
+        in: path
+        name: memberId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: '성공 : 패스워드 초기화된 회원정보 반환'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 관리자 패스워드를 초기화하는경우
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 id의 회원이 존재하지 않음
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 다른장부사 계정의 정보를 수정하는경우
+      security:
+      - bearer: []
+      summary: 로그인 패스워드 초기화
+      tags:
+      - 회원정보
+      x-accepts: application/json
+  /public/api/app/version:
+    get:
+      description: 앱 버전 목록을 검색한다
+      operationId: MobileAppController_getAppVersions
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 앱의 활성여부 (T:활성,F:비활성)
+        explode: true
+        in: query
+        name: active
+        required: false
+        schema:
+          enum:
+          - T
+          - F
+          type: string
+        style: form
+      - description: OS유형
+        explode: true
+        in: query
+        name: osType
+        required: false
+        schema:
+          $ref: '#/components/schemas/OsType'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAppVersionsOutput'
+          description: '성공 : 앱 버전 목록을 반환'
+      security:
+      - bearer: []
+      summary: 앱 버전 목록 검색 (관리자 전용)
+      tags:
+      - 모바일앱정보
+      x-accepts: application/json
+    post:
+      description: 앱 버전을 등록한다
+      operationId: MobileAppController_registerAppVersion
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAppVersionInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppVersion'
+          description: '성공 : 등록된 앱 버전을 반환'
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 OS의 버전이 이미 존재하는경우
+      security:
+      - bearer: []
+      summary: 앱 버전 등록 (관리자 전용)
+      tags:
+      - 모바일앱정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/app/user:
+    get:
+      description: 앱 사용자 목록을 검색한다
+      operationId: MobileAppController_getUsingAppUsers
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 앱의 활성여부 (T:활성,F:비활성)
+        explode: true
+        in: query
+        name: active
+        required: false
+        schema:
+          enum:
+          - T
+          - F
+          type: string
+        style: form
+      - description: OS유형
+        explode: true
+        in: query
+        name: osType
+        required: false
+        schema:
+          $ref: '#/components/schemas/OsType'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: '성공 : 앱 사용자 목록을 반환'
+      security:
+      - bearer: []
+      summary: 앱 사용자 목록 검색 (관리자 전용)
+      tags:
+      - 모바일앱정보
+      x-accepts: application/json
+  /public/api/app/jangbu/{jangbuId}/message:
+    get:
+      description: (특정 장부사의) 메시지 목록을 검색한다
+      operationId: MobileAppController_getJangbuMessages
+      parameters:
+      - explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 기간 시작일자(YYYYMMDD)
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 기간 종료일자(YYYYMMDD)
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJangbuMessagesOutput'
+          description: '성공 : (특정 장부사의) 메시지 목록을 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않음
+      security:
+      - bearer: []
+      summary: (특정 장부사의) 메시지 목록 검색 (관리자, 장부사 전용)
+      tags:
+      - 모바일앱정보
+      x-accepts: application/json
+  /public/api/app/jangbu/{jangbuId}/message/{messageId}:
+    get:
+      description: (특정 장부사의) 특정 메시지를 조회한다
+      operationId: MobileAppController_getJangbuMessage
+      parameters:
+      - explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 메시지 순번
+        explode: false
+        in: path
+        name: messageId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: '성공 : (특정 장부사의) 메시지 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않거나 메시지가 존재하지 않음
+      security:
+      - bearer: []
+      summary: (특정 장부사의) 메시지 조회 (관리자, 장부사 전용)
+      tags:
+      - 모바일앱정보
+      x-accepts: application/json
+  /public/api/app/version/{versionId}:
+    patch:
+      description: 앱 버전을 수정한다
+      operationId: MobileAppController_updateAppVersion
+      parameters:
+      - description: 버전 순번
+        explode: false
+        in: path
+        name: versionId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppVersionInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppVersion'
+          description: '성공 : 수정된 앱 버전을 반환'
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 OS의 버전이 이미 존재하는경우
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 앱 버전이 존재하지 않는경우
+      security:
+      - bearer: []
+      summary: 앱 버전 수정 (관리자 전용)
+      tags:
+      - 모바일앱정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/notice:
+    get:
+      description: 공지사항 목록을 검색한다
+      operationId: NoticeController_getNotices
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetNotices'
+          description: '성공 : 공지사항 목록을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 잘못된 검색옵션의 입력'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 인증실패 (엑세스 토큰의 유무, 유효기간)'
+      security:
+      - bearer: []
+      summary: 공지사항 검색 (관리자, 장부사 전용)
+      tags:
+      - 공지사항
+      x-accepts: application/json
+    post:
+      description: 공지사항을 등록한다
+      operationId: NoticeController_registerNotice
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNoticeInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notice'
+          description: '성공 : 등록된 공지사항을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 요청 파라미터 오류'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 인증 실패'
+      security:
+      - bearer: []
+      summary: 공지사항 등록 (관리자 전용)
+      tags:
+      - 공지사항
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/notice/{noticeId}:
+    delete:
+      description: 공지사항을 삭제한다
+      operationId: NoticeController_deleteNotice
+      parameters:
+      - explode: false
+        in: path
+        name: noticeId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notice'
+          description: '성공 : 삭제된 공지사항을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 요청 파라미터 오류'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 인증 실패'
+      security:
+      - bearer: []
+      summary: 공지사항 삭제 (관리자 전용)
+      tags:
+      - 공지사항
+      x-accepts: application/json
+    get:
+      description: 특정 공지사항을 조회한다
+      operationId: NoticeController_getNotice
+      parameters:
+      - description: 공지사항 순번
+        explode: false
+        in: path
+        name: noticeId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notice'
+          description: '성공 : 공지사항 정보를 반환'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 인증실패 (엑세스 토큰의 유무, 유효기간)'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 공지사항을 찾을 수 없음'
+      security:
+      - bearer: []
+      summary: 공지사항 조회 (관리자, 장부사 전용)
+      tags:
+      - 공지사항
+      x-accepts: application/json
+    put:
+      description: 공지사항을 수정한다
+      operationId: NoticeController_updateNotice
+      parameters:
+      - description: 공지사항 순번
+        explode: false
+        in: path
+        name: noticeId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterNoticeInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notice'
+          description: '성공 : 수정된 공지사항을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 요청 파라미터 오류'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 인증 실패'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 공지사항을 찾을 수 없음'
+      security:
+      - bearer: []
+      summary: 공지사항 수정 (관리자 전용)
+      tags:
+      - 공지사항
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/role:
+    get:
+      description: 권한 목록을 검색한다
+      operationId: RoleController_getRoles
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: '회원 레벨(1: 고객, 2: 장부사, 3: 관리자)'
+        explode: true
+        in: query
+        name: userLevel
+        required: false
+        schema:
+          enum:
+          - 1
+          - 2
+          - 3
+          type: number
+        style: form
+      - description: '활성 여부(0: 비활성, 1: 활성)'
+        explode: true
+        in: query
+        name: active
+        required: false
+        schema:
+          enum:
+          - "0"
+          - "1"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchRoleGroupOutput'
+          description: '성공 : 권한목록을 반환'
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 권한이 없음'
+      security:
+      - bearer: []
+      summary: 권한 목록 검색 (관리자, 장부사 전용)
+      tags:
+      - 권한정보
+      x-accepts: application/json
+    post:
+      description: 권한을 등록한다
+      operationId: RoleController_registerRole
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleGroupInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleGroup'
+          description: '성공 : 등록된 권한을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 권한 목록 중 중복되는 값 존재'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 이미 존재하는 그룹명 또는 그룹 권한'
+      security:
+      - bearer: []
+      summary: 권한 등록 (관리자 전용)
+      tags:
+      - 권한정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/role/{roleGroupCode}:
+    put:
+      description: 권한을 수정한다
+      operationId: RoleController_updateRole
+      parameters:
+      - description: 그룹코드명
+        explode: false
+        in: path
+        name: roleGroupCode
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoleGroupInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleGroup'
+          description: '성공 : 수정된 권한을 반환'
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 권한 목록 중 중복되는 값 존재'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 권한 그룹을 찾을 수 없음'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 이미 존재하는 그룹 권한'
+      security:
+      - bearer: []
+      summary: 권한 수정 (관리자 전용)
+      tags:
+      - 권한정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/scraping-code:
+    get:
+      description: 스크래핑 코드목록을 검색한다
+      operationId: ScrapingCodeController_getScrapingCodes
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 순번
+        explode: true
+        in: query
+        name: serviceId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: '활성화 여부 (1: 활성, 0: 비활성)'
+        explode: true
+        in: query
+        name: active
+        required: false
+        schema:
+          enum:
+          - "0"
+          - "1"
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScrapingCodesOutput'
+          description: '성공 : 스크랩핑 코드 목록을 반환'
+      security:
+      - bearer: []
+      summary: '스크래핑 코드 목록 검색 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 스크랩핑코드정보
+      x-accepts: application/json
+    post:
+      description: 스크래핑 코드버전을 등록한다
+      operationId: ScrapingCodeController_registerScrapingCodeVersion
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterScrapingCodeVersionInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapingCode'
+          description: '성공 : 등록된 스크랩핑 코드 버전을 반환'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 이미 존재하는 버전'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 스크래핑 코드 업로드 중 오류 발생'
+      security:
+      - bearer: []
+      summary: 스크래핑 코드 버전 등록 (Github Action >> Amazon SNS)
+      tags:
+      - 스크랩핑코드정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/scraping-code/{serviceId}:
+    patch:
+      description: 특정 버전 코드를 활성/비활성화 한다
+      operationId: ScrapingCodeController_activateScrapingCode
+      parameters:
+      - description: 서비스 순번
+        explode: false
+        in: path
+        name: serviceId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 버전
+        explode: true
+        in: query
+        name: version
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapingCode'
+          description: '성공 : 활성 여부가 변경된 코드를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 해당 버전의 코드를 찾을 수 없음'
+      security:
+      - bearer: []
+      summary: '코드 활성 여부 변경 (관리자 전용: 극히 일부사용자만)'
+      tags:
+      - 스크랩핑코드정보
+      x-accepts: application/json
+  /public/api/service:
+    get:
+      description: 서비스 목록을 검색한다
+      operationId: ServiceController_getServices
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 카테고리
+        example: 계좌통합
+        explode: true
+        in: query
+        name: category
+        required: false
+        schema:
+          enum:
+          - 회계업로드
+          - 계좌통합
+          - 음식배달
+          - EDI
+          type: string
+        style: form
+      - description: 장부사 순번
+        explode: true
+        in: query
+        name: jangbuId
+        required: false
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetServicesOutput'
+          description: '성공 : 서비스 목록을 반환'
+      security:
+      - bearer: []
+      summary: 서비스 목록 검색
+      tags:
+      - 서비스정보
+      x-accepts: application/json
+    post:
+      description: 서비스를 새로 등록한다
+      operationId: ServiceController_registerService
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterServiceInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: '성공 : 등록한 서비스를 반환'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 이미 존재하는 서비스'
+      security:
+      - bearer: []
+      summary: '서비스 등록 (관리자전용: 일부사용자 or 정산관리자)'
+      tags:
+      - 서비스정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/service/{serviceId}:
+    get:
+      description: 특정 서비스를 조회한다
+      operationId: ServiceController_getService
+      parameters:
+      - explode: false
+        in: path
+        name: serviceId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: '성공 : 조회한 서비스를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 서비스를 찾을 수 없음'
+      security:
+      - bearer: []
+      summary: 서비스 조회 (관리자전용)
+      tags:
+      - 서비스정보
+      x-accepts: application/json
+    patch:
+      description: 서비스를 수정한다
+      operationId: ServiceController_updateService
+      parameters:
+      - explode: false
+        in: path
+        name: serviceId
+        required: true
+        schema:
+          type: number
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateServiceInput'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+          description: '성공 : 수정된 서비스를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: '실패 : 서비스를 찾을 수 없음'
+      security:
+      - bearer: []
+      summary: '서비스 수정 (관리자전용: 일부사용자)'
+      tags:
+      - 서비스정보
+      x-contentType: application/json
+      x-accepts: application/json
+  /public/api/work:
+    get:
+      description: 업무목록을 검색한다
+      operationId: WorkController_getWorks
+      parameters:
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 순번
+        explode: true
+        in: query
+        name: serviceId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 상태별
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          $ref: '#/components/schemas/ProcessFlag'
+        style: form
+      - description: (업무)요청 타입
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          $ref: '#/components/schemas/WorkRequestType'
+        style: form
+      - description: (로그인) 아이디
+        explode: true
+        in: query
+        name: loginId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 상호명
+        explode: true
+        in: query
+        name: userName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 장부사명
+        explode: true
+        in: query
+        name: jangbuName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 메모내용
+        explode: true
+        in: query
+        name: memo
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 접수 건수
+        explode: true
+        in: query
+        name: count
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 검색시작일자 (YYYYMMDD)
+        example: "20210115"
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 검색종료일자 (YYYYMMDD)
+        example: "20210205"
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorksOutput'
+          description: '성공 : 업무목록을 반환'
+      security:
+      - bearer: []
+      summary: 업무 목록 검색 (관리자 전용)
+      tags:
+      - 업무정보
+      x-accepts: application/json
+  /public/api/work/log:
+    get:
+      description: (관리자전용) 특정 업무의 S3정보를 조회한다.
+      operationId: WorkController_getWorkS3Data
+      parameters:
+      - description: S3저장 경로
+        explode: true
+        in: query
+        name: path
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorkS3DataResponse'
+          description: '성공 : 업로드 또는 스크래핑 로그 정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 존재하지 않는 S3 데이터
+      security:
+      - bearer: []
+      summary: (관리자전용) 특정 업무의 S3정보 조회 (업로드 정보 또는 스크래핑 정보)
+      tags:
+      - 업무정보
+      x-accepts: application/json
+  /public/api/work/log-detail/{workId}:
+    get:
+      description: 특정 업무의 S3정보(업로드 로그)를 조회한다.
+      operationId: WorkController_getWorkS3DetailLog
+      parameters:
+      - description: 업무순번
+        explode: false
+        in: path
+        name: workId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorkS3DetailLogResponse'
+          description: '성공 : S3(업로드 로그) 데이터 목록을 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 존재하지 않는 업무내역 또는 S3데이터가 없는경우, 정보가 없는경우 혹은 업무내역의 로그가 없거나 요청타입이
+            없는경우
+      security:
+      - bearer: []
+      summary: 특정 업무의 S3정보의 조회 (업로드 로그)
+      tags:
+      - 업무정보
+      x-accepts: application/json
+  /public/api/jangbu/{jangbuId}/work:
+    get:
+      description: 장부사별 업무목록을 검색한다
+      operationId: WorkController_getWorksByJangbu
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 서비스 순번
+        explode: true
+        in: query
+        name: serviceId
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 상태별
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          $ref: '#/components/schemas/ProcessFlag'
+        style: form
+      - description: (업무)요청 타입
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          $ref: '#/components/schemas/WorkRequestType'
+        style: form
+      - description: (로그인) 아이디
+        explode: true
+        in: query
+        name: loginId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 상호명
+        explode: true
+        in: query
+        name: userName
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 메모내용
+        explode: true
+        in: query
+        name: memo
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 데이터 건수
+        explode: true
+        in: query
+        name: count
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 검색시작일자 (YYYYMMDD)
+        example: "20210115"
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 검색종료일자 (YYYYMMDD)
+        example: "20210205"
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorksOutput'
+          description: '성공 : 장부사별 업무목록을 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않는 경우에 해당
+      security:
+      - bearer: []
+      summary: 장부사별 업무 목록 검색 (장부사 전용)
+      tags:
+      - 업무정보
+      x-accepts: application/json
+  /public/api/jangbu/{jangbuId}/user/{userId}/work:
+    get:
+      description: 사용자별 업무목록을 검색한다
+      operationId: WorkController_getWorksByUser
+      parameters:
+      - description: 회원 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 페이징 페이지 정보
+        example: 1
+        explode: true
+        in: query
+        name: page
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 페이지당 목록 수
+        example: 10
+        explode: true
+        in: query
+        name: limit
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 페이징 링크 경로
+        explode: true
+        in: query
+        name: route
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 상태별
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          $ref: '#/components/schemas/ProcessFlag'
+        style: form
+      - description: 메모내용
+        explode: true
+        in: query
+        name: memo
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 데이터 건수
+        explode: true
+        in: query
+        name: count
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: 검색시작일자 (YYYYMMDD)
+        example: "20210115"
+        explode: true
+        in: query
+        name: startAt
+        required: true
+        schema:
+          type: number
+        style: form
+      - description: 검색종료일자 (YYYYMMDD)
+        example: "20210205"
+        explode: true
+        in: query
+        name: endAt
+        required: true
+        schema:
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetWorksOutput'
+          description: '성공 : 사용자별 업무목록을 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 장부사가 존재하지 않거나 장부사의 고객이 아닌 경우에 해당
+      security:
+      - bearer: []
+      summary: 사용자별 업무 목록 검색 (고객 전용)
+      tags:
+      - 업무정보
+      x-accepts: application/json
+  /public/api/jangbu/{jangbuId}/user/{userId}/work/{workId}:
+    get:
+      description: 특정 업무를 조회한다
+      operationId: WorkController_getWork
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 회원 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 업무 순번
+        explode: false
+        in: path
+        name: workId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+          description: '성공 : 업무정보를 반환'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: 해당 업무내역이 존재하지 않음
+      security:
+      - bearer: []
+      summary: 업무 조회
+      tags:
+      - 업무정보
+      x-accepts: application/json
+    patch:
+      description: (접수 또는 승인건만) 업무를 수정한다
+      operationId: WorkController_updateWork
+      parameters:
+      - description: 장부사 순번
+        explode: false
+        in: path
+        name: jangbuId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 회원 순번
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: number
+        style: simple
+      - description: 업무 순번
+        explode: false
+        in: path
+        name: workId
+        required: true
+        schema:
+          type: number
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+          description: '성공 : 수정된 업무를 반환'
+        "404":
+          description: 해당 업무가 존재하지 않음
+        "406":
+          description: 해당 업무가 접수 또는 승인상태가 아님
+      security:
+      - bearer: []
+      summary: '(접수 또는 승인건만) 업무 수정 (관리자 전용: 취소처리)'
+      tags:
+      - 업무정보
+      x-accepts: application/json
+components:
+  schemas:
+    ChargeJangbuStatus:
+      enum:
+      - ready
+      - complete
+      type: string
+    ChargeJangbuPaid:
+      enum:
+      - "Y"
+      - "N"
+      type: string
+    ChargeJangbuPartnership:
+      example:
+        unitPrice: 5.962133916683182
+        supplyPrice: 5.637376656633329
+        yearMonth: 6.027456183070403
+        applyCount: 1.4658129805029452
+        vatPrice: 2.3021358869347655
+        jangbuId: 0.8008281904610115
+      properties:
+        jangbuId:
+          description: 장부사 순번
+          type: number
+        yearMonth:
+          description: 정산연월
+          type: number
+        applyCount:
+          description: 계좌수
+          type: number
+        unitPrice:
+          description: 단가
+          type: number
+        supplyPrice:
+          description: 총 금액
+          type: number
+        vatPrice:
+          description: (부가세포함된) 총 금액
+          type: number
+      required:
+      - applyCount
+      - jangbuId
+      - supplyPrice
+      - unitPrice
+      - vatPrice
+      - yearMonth
+      type: object
+    Jangbu:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        name: name
+        taxEmail: taxEmail
+        active: true
+        chargeJangbuPartnerships:
+        - unitPrice: 5.962133916683182
+          supplyPrice: 5.637376656633329
+          yearMonth: 6.027456183070403
+          applyCount: 1.4658129805029452
+          vatPrice: 2.3021358869347655
+          jangbuId: 0.8008281904610115
+        - unitPrice: 5.962133916683182
+          supplyPrice: 5.637376656633329
+          yearMonth: 6.027456183070403
+          applyCount: 1.4658129805029452
+          vatPrice: 2.3021358869347655
+          jangbuId: 0.8008281904610115
+        id: 0.8008281904610115
+        repId: repId
+      properties:
+        id:
+          description: 장부사번호
+          type: number
+        repId:
+          description: 장부사 아이디
+          type: string
+        active:
+          description: 유효성여부
+          type: boolean
+        name:
+          description: 장부사명
+          type: string
+        taxEmail:
+          description: 과금 이메일
+          type: string
+        createdAt:
+          description: 생성일자
+          format: date-time
+          type: string
+        chargeJangbuPartnerships:
+          description: 계좌통합서비스 정보목록
+          items:
+            $ref: '#/components/schemas/ChargeJangbuPartnership'
+          nullable: true
+          type: array
+      required:
+      - active
+      - createdAt
+      - id
+      - name
+      - repId
+      - taxEmail
+      type: object
+    ChargeJangbu:
+      example:
+        totalPrice: 1.4658129805029452
+        yearMonth: 6.027456183070403
+        discountPrice: 5.962133916683182
+        memo: memo
+        minBillingPrice: 5.637376656633329
+        jangbu: ""
+        paidMemo: paidMemo
+        vatPrice: 7.061401241503109
+        jangbuId: 0.8008281904610115
+        chargeJangbuPartnership: ""
+        billingPrice: 2.3021358869347655
+      properties:
+        jangbuId:
+          description: 장부사 순번
+          type: number
+        yearMonth:
+          description: 해당연월
+          type: number
+        totalPrice:
+          description: 정산합계금액
+          type: number
+        discountPrice:
+          description: 할인된 금액
+          type: number
+        minBillingPrice:
+          description: 최저이용금액
+          type: number
+        billingPrice:
+          description: 청구금액
+          type: number
+        vatPrice:
+          description: 부가세 포함금액
+          type: number
+        status:
+          $ref: '#/components/schemas/ChargeJangbuStatus'
+        paid:
+          $ref: '#/components/schemas/ChargeJangbuPaid'
+        memo:
+          description: 메모 (합계산정이유 등)
+          nullable: true
+          type: string
+        paidMemo:
+          description: 정산관련메모 (미납사유 등)
+          nullable: true
+          type: string
+        chargeJangbuPartnership:
+          allOf:
+          - $ref: '#/components/schemas/ChargeJangbuPartnership'
+          description: 계좌통합서비스
+          nullable: true
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사
+          nullable: true
+      required:
+      - billingPrice
+      - discountPrice
+      - jangbuId
+      - minBillingPrice
+      - paid
+      - status
+      - totalPrice
+      - vatPrice
+      - yearMonth
+      type: object
+    PagingMeta:
+      properties:
+        itemCount:
+          description: 현재페이지 목록수
+          readOnly: true
+          type: number
+        totalItems:
+          description: 전체목록수
+          readOnly: true
+          type: number
+        itemsPerPage:
+          description: 페이지당 목록수
+          readOnly: true
+          type: number
+        totalPages:
+          description: 전체페이지 수
+          readOnly: true
+          type: number
+        currentPage:
+          description: 현재페이지 번호
+          readOnly: true
+          type: number
+      required:
+      - currentPage
+      - itemCount
+      - itemsPerPage
+      - totalItems
+      - totalPages
+      type: object
+    PagingLinks:
+      properties:
+        first:
+          description: 처음 페이지 링크
+          type: string
+        previous:
+          description: 이전 페이지 링크
+          type: string
+        next:
+          description: 다음 페이지 링크
+          type: string
+        last:
+          description: 마지막 페이지 링크
+          type: string
+      type: object
+    SearchChargeJangbusOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - totalPrice: 1.4658129805029452
+          yearMonth: 6.027456183070403
+          discountPrice: 5.962133916683182
+          memo: memo
+          minBillingPrice: 5.637376656633329
+          jangbu: ""
+          paidMemo: paidMemo
+          vatPrice: 7.061401241503109
+          jangbuId: 0.8008281904610115
+          chargeJangbuPartnership: ""
+          billingPrice: 2.3021358869347655
+        - totalPrice: 1.4658129805029452
+          yearMonth: 6.027456183070403
+          discountPrice: 5.962133916683182
+          memo: memo
+          minBillingPrice: 5.637376656633329
+          jangbu: ""
+          paidMemo: paidMemo
+          vatPrice: 7.061401241503109
+          jangbuId: 0.8008281904610115
+          chargeJangbuPartnership: ""
+          billingPrice: 2.3021358869347655
+      properties:
+        items:
+          description: 정산내역 목록
+          items:
+            $ref: '#/components/schemas/ChargeJangbu'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    AdjustJangbuService:
+      example:
+        unitPrice: 5.962133916683182
+        totalVatBillingPrice: 4.145608029883936
+        totalBillingPrice: 2.027123023002322
+        totalPrice: 7.061401241503109
+        yearMonth: 6.027456183070403
+        memo: memo
+        totalDiscountPrice: 3.616076749251911
+        serviceName: serviceName
+        discountUnitPrice: 5.637376656633329
+        jangbuId: 0.8008281904610115
+        serviceId: 1.4658129805029452
+        applyUserCount: 2.3021358869347655
+        freeCount: 9.301444243932576
+      properties:
+        jangbuId:
+          description: 장부사 순번
+          type: number
+        yearMonth:
+          description: 정산월
+          type: number
+        serviceId:
+          description: 서비스 순번
+          type: number
+        serviceName:
+          description: 서비스명
+          type: string
+        unitPrice:
+          description: 정산단가
+          type: number
+        discountUnitPrice:
+          description: 할인적용된 단가
+          type: number
+        applyUserCount:
+          description: 정산대상자 수
+          type: number
+        totalPrice:
+          description: 정산금액
+          type: number
+        memo:
+          description: 메모 (할인책정사유 등)
+          type: string
+        freeCount:
+          description: 무료이용건수
+          nullable: true
+          type: number
+        totalDiscountPrice:
+          description: 할인금액
+          nullable: true
+          type: number
+        totalBillingPrice:
+          description: 총 공급가
+          nullable: true
+          type: number
+        totalVatBillingPrice:
+          description: VAT적용된 총 공급가
+          nullable: true
+          type: number
+      required:
+      - applyUserCount
+      - discountUnitPrice
+      - jangbuId
+      - memo
+      - serviceId
+      - serviceName
+      - totalPrice
+      - unitPrice
+      - yearMonth
+      type: object
+    SearchAdjustJangbuServicesOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - unitPrice: 5.962133916683182
+          totalVatBillingPrice: 4.145608029883936
+          totalBillingPrice: 2.027123023002322
+          totalPrice: 7.061401241503109
+          yearMonth: 6.027456183070403
+          memo: memo
+          totalDiscountPrice: 3.616076749251911
+          serviceName: serviceName
+          discountUnitPrice: 5.637376656633329
+          jangbuId: 0.8008281904610115
+          serviceId: 1.4658129805029452
+          applyUserCount: 2.3021358869347655
+          freeCount: 9.301444243932576
+        - unitPrice: 5.962133916683182
+          totalVatBillingPrice: 4.145608029883936
+          totalBillingPrice: 2.027123023002322
+          totalPrice: 7.061401241503109
+          yearMonth: 6.027456183070403
+          memo: memo
+          totalDiscountPrice: 3.616076749251911
+          serviceName: serviceName
+          discountUnitPrice: 5.637376656633329
+          jangbuId: 0.8008281904610115
+          serviceId: 1.4658129805029452
+          applyUserCount: 2.3021358869347655
+          freeCount: 9.301444243932576
+      properties:
+        items:
+          description: 장부사 서비스별 단가 목록
+          items:
+            $ref: '#/components/schemas/AdjustJangbuService'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    ExceptionResponse:
+      properties:
+        statusCode:
+          description: HTTP Status Code
+          type: number
+        message:
+          description: 결과 메시지
+          type: string
+        error:
+          description: 에러 내용
+          type: string
+      required:
+      - error
+      - message
+      - statusCode
+      type: object
+    Permission:
+      enum:
+      - r
+      - w
+      type: string
+    RoleListItem:
+      example: {}
+      properties:
+        roleName:
+          $ref: '#/components/schemas/RoleGroup'
+        permission:
+          $ref: '#/components/schemas/Permission'
+      required:
+      - permission
+      - roleName
+      type: object
+    RoleGroup:
+      example:
+        code: code
+        userLevel: 0.8008281904610115
+        name: name
+        active: true
+        roleList:
+        - {}
+        - {}
+        desc: desc
+      properties:
+        code:
+          description: 권한그룹 코드
+          type: string
+        name:
+          description: 권한그룹명
+          type: string
+        desc:
+          description: 권한그룹 설명
+          nullable: true
+          type: string
+        userLevel:
+          description: 회원 레벨
+          type: number
+        active:
+          description: 활성여부
+          type: boolean
+        roleList:
+          description: 권한 목록
+          items:
+            $ref: '#/components/schemas/RoleListItem'
+          type: array
+      required:
+      - active
+      - code
+      - name
+      - roleList
+      - userLevel
+      type: object
+    User:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        loginId: loginId
+        userLevel: 1.4658129805029452
+        phone: phone
+        name: name
+        jangbuId: 6.027456183070403
+        active: true
+        id: 0.8008281904610115
+        ceoName: ceoName
+        roleGroup: ""
+        email: email
+        jangbu: ""
+      properties:
+        id:
+          description: 회원순번
+          type: number
+        jangbuId:
+          description: 장부사 순번 (관리자의 경우 없음)
+          nullable: true
+          type: number
+        loginId:
+          description: 로그인아이디
+          maxLength: 45
+          type: string
+        name:
+          description: 회원명
+          type: string
+        ceoName:
+          description: 대표자명
+          nullable: true
+          type: string
+        email:
+          description: 이메일
+          type: string
+        phone:
+          description: 핸드폰
+          type: string
+        createdAt:
+          description: 생성일시
+          format: date-time
+          type: string
+        active:
+          description: 이용여부
+          type: boolean
+        userLevel:
+          description: 회원레벨 (1:고객, 2:장부사, 3:관리자)
+          type: number
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사
+          nullable: true
+        roleGroup:
+          allOf:
+          - $ref: '#/components/schemas/RoleGroup'
+          description: 권한그룹
+          nullable: true
+      required:
+      - active
+      - createdAt
+      - email
+      - id
+      - loginId
+      - name
+      - phone
+      - userLevel
+      type: object
+    ChargeJangbuUserService:
+      example:
+        yearMonth: 6.027456183070403
+        price: 5.637376656633329
+        discountPrice: 2.3021358869347655
+        jangbuId: 0.8008281904610115
+        memo: memo
+        serviceId: 5.962133916683182
+        serviceName: serviceName
+        userId: 1.4658129805029452
+        user: ""
+        billingPrice: 7.061401241503109
+      properties:
+        jangbuId:
+          description: 장부사 순번
+          type: number
+        yearMonth:
+          description: 정산연월
+          type: number
+        userId:
+          description: 고객 순번
+          type: number
+        serviceId:
+          description: 서비스 순번
+          type: number
+        serviceName:
+          description: 서비스명
+          type: string
+        price:
+          description: 정산합계금액
+          type: number
+        discountPrice:
+          description: 할인적용금액
+          type: number
+        billingPrice:
+          description: 청구금액
+          type: number
+        memo:
+          description: 메모(합계 산정 이유 등)
+          type: string
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          description: 회원정보
+          nullable: true
+      required:
+      - billingPrice
+      - discountPrice
+      - jangbuId
+      - memo
+      - price
+      - serviceId
+      - serviceName
+      - userId
+      - yearMonth
+      type: object
+    SearchChargeJangbuUserServicesOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - yearMonth: 6.027456183070403
+          price: 5.637376656633329
+          discountPrice: 2.3021358869347655
+          jangbuId: 0.8008281904610115
+          memo: memo
+          serviceId: 5.962133916683182
+          serviceName: serviceName
+          userId: 1.4658129805029452
+          user: ""
+          billingPrice: 7.061401241503109
+        - yearMonth: 6.027456183070403
+          price: 5.637376656633329
+          discountPrice: 2.3021358869347655
+          jangbuId: 0.8008281904610115
+          memo: memo
+          serviceId: 5.962133916683182
+          serviceName: serviceName
+          userId: 1.4658129805029452
+          user: ""
+          billingPrice: 7.061401241503109
+      properties:
+        items:
+          description: 장부사 서비스별 회원 요금 목록
+          items:
+            $ref: '#/components/schemas/ChargeJangbuUserService'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    UpdateChargeJangbuPartnershipInput:
+      example:
+        unitPrice: 6.027456183070403
+        applyCount: 0.8008281904610115
+      properties:
+        applyCount:
+          description: 계좌수
+          nullable: true
+          type: number
+        unitPrice:
+          description: 단가
+          nullable: true
+          type: number
+      type: object
+    UpdateAdjustJangbuServiceInput:
+      example:
+        memo: memo
+        discountUnitPrice: 6.027456183070403
+        applyUserCount: 0.8008281904610115
+      properties:
+        applyUserCount:
+          description: 정산대상자 수
+          nullable: true
+          type: number
+        discountUnitPrice:
+          description: 할인적용된 단가
+          nullable: true
+          type: number
+        memo:
+          description: 메모 (할인책정사유 등)
+          nullable: true
+          type: string
+      type: object
+    UpdateChargeJangbuPaidInput:
+      example: {}
+      properties:
+        paid:
+          $ref: '#/components/schemas/ChargeJangbuPaid'
+      required:
+      - paid
+      type: object
+    UpdateChargeJangbuStatusInput:
+      example:
+        email: email
+      properties:
+        email:
+          description: 수신자 이메일
+          type: string
+      required:
+      - email
+      type: object
+    RegisterAdjustOutput:
+      example:
+        step: 0.8008281904610115
+        adjustJangbuServices:
+        - unitPrice: 5.962133916683182
+          totalVatBillingPrice: 4.145608029883936
+          totalBillingPrice: 2.027123023002322
+          totalPrice: 7.061401241503109
+          yearMonth: 6.027456183070403
+          memo: memo
+          totalDiscountPrice: 3.616076749251911
+          serviceName: serviceName
+          discountUnitPrice: 5.637376656633329
+          jangbuId: 0.8008281904610115
+          serviceId: 1.4658129805029452
+          applyUserCount: 2.3021358869347655
+          freeCount: 9.301444243932576
+        - unitPrice: 5.962133916683182
+          totalVatBillingPrice: 4.145608029883936
+          totalBillingPrice: 2.027123023002322
+          totalPrice: 7.061401241503109
+          yearMonth: 6.027456183070403
+          memo: memo
+          totalDiscountPrice: 3.616076749251911
+          serviceName: serviceName
+          discountUnitPrice: 5.637376656633329
+          jangbuId: 0.8008281904610115
+          serviceId: 1.4658129805029452
+          applyUserCount: 2.3021358869347655
+          freeCount: 9.301444243932576
+        chargeJangbuPartnership: ""
+        chargeJangbu: ""
+      properties:
+        step:
+          description: 진행된 정산내역 등록단계
+          type: number
+        adjustJangbuServices:
+          description: (1단계진행시 반환정보) 장부사 서비스별 단가목록
+          items:
+            $ref: '#/components/schemas/AdjustJangbuService'
+          nullable: true
+          type: array
+        chargeJangbuPartnership:
+          allOf:
+          - $ref: '#/components/schemas/ChargeJangbuPartnership'
+          description: (1단계진행시 반환정보) 장부사 계좌통합서비스 정보
+          nullable: true
+        chargeJangbu:
+          allOf:
+          - $ref: '#/components/schemas/ChargeJangbu'
+          description: (2단계진행시 반환정보) 해당연월 장부사 정산금액
+          nullable: true
+      required:
+      - step
+      type: object
+    GetChargeJangbuPreviewOutput:
+      example:
+        html: html
+        chargeJangbu: ""
+        jangbu: ""
+      properties:
+        chargeJangbu:
+          allOf:
+          - $ref: '#/components/schemas/ChargeJangbu'
+          description: 정산내역
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사 정보
+        html:
+          description: 메일 미리보기 html
+          type: string
+      required:
+      - chargeJangbu
+      - html
+      - jangbu
+      type: object
+    SendChagreJangbuMailTestInput:
+      example:
+        email: email
+      properties:
+        email:
+          description: 수신자 이메일
+          type: string
+      required:
+      - email
+      type: object
+    SendChargeJangbuMailTestOutput:
+      example:
+        email: email
+        jangbu: ""
+      properties:
+        email:
+          description: 수신자 이메일
+          type: string
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사
+      required:
+      - email
+      - jangbu
+      type: object
+    InOutFlag:
+      enum:
+      - IN
+      - OUT
+      type: string
+    ApiLogDetail:
+      properties:
+        apiId:
+          description: api로그 번호
+          type: number
+        version:
+          description: api 버전
+          nullable: true
+          type: string
+        method:
+          description: api 요청 method
+          nullable: true
+          type: string
+        serviceName:
+          description: api 요청 서비스
+          nullable: true
+          type: string
+        userType:
+          description: api 요청 주체
+          nullable: true
+          type: string
+        workRequestType:
+          description: 데이터등록요청 타입
+          nullable: true
+          type: string
+        description:
+          description: api 요청 결과
+          nullable: true
+          type: string
+        inData:
+          description: In data
+          nullable: true
+          type: string
+        outData:
+          description: Out data
+          nullable: true
+          type: string
+        inDataPath:
+          description: In data s3 데이터
+          nullable: true
+          type: string
+        outDataPath:
+          description: Out data s3 데이터
+          nullable: true
+          type: string
+      required:
+      - apiId
+      type: object
+    ApiLog:
+      example:
+        createdAt: createdAt
+        userLevel: 1.4658129805029452
+        ip: ip
+        resultCode: resultCode
+        id: 0.8008281904610115
+        detail: ""
+        userId: 6.027456183070403
+        user: ""
+        url: url
+      properties:
+        id:
+          description: api로그 번호
+          type: number
+        userId:
+          description: 회원번호
+          type: number
+        userLevel:
+          description: 회원레벨
+          type: number
+        inout:
+          $ref: '#/components/schemas/InOutFlag'
+        url:
+          description: 요청 url
+          type: string
+        ip:
+          description: ip
+          type: string
+        resultCode:
+          description: 결과 코드
+          type: string
+        createdAt:
+          description: 생성일
+          type: string
+        detail:
+          allOf:
+          - $ref: '#/components/schemas/ApiLogDetail'
+          description: api 로그 상세
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          description: 회원 정보
+      required:
+      - createdAt
+      - detail
+      - id
+      - inout
+      - ip
+      - resultCode
+      - url
+      - user
+      - userId
+      - userLevel
+      type: object
+    GetApiMonitorsOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: createdAt
+          userLevel: 1.4658129805029452
+          ip: ip
+          resultCode: resultCode
+          id: 0.8008281904610115
+          detail: ""
+          userId: 6.027456183070403
+          user: ""
+          url: url
+        - createdAt: createdAt
+          userLevel: 1.4658129805029452
+          ip: ip
+          resultCode: resultCode
+          id: 0.8008281904610115
+          detail: ""
+          userId: 6.027456183070403
+          user: ""
+          url: url
+      properties:
+        items:
+          description: API 모니터링 정보 목록
+          items:
+            $ref: '#/components/schemas/ApiLog'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    LoginInput:
+      example:
+        password: "1234"
+        id: bankda
+      properties:
+        id:
+          description: 로그인 아이디
+          example: bankda
+          type: string
+        password:
+          description: 로그인 패스워드
+          example: "1234"
+          type: string
+      required:
+      - id
+      - password
+      type: object
+    LoginOutput:
+      example:
+        accessToken: accessToken
+        refreshToken: refreshToken
+      properties:
+        accessToken:
+          description: 엑세스토큰
+          type: string
+        refreshToken:
+          description: 리프레시토큰
+          type: string
+      required:
+      - accessToken
+      - refreshToken
+      type: object
+    RefreshInput:
+      example:
+        accessToken: accessToken
+        refreshToken: refreshToken
+      properties:
+        accessToken:
+          description: 엑세스토큰
+          type: string
+        refreshToken:
+          description: 리프레시토큰
+          type: string
+      required:
+      - accessToken
+      - refreshToken
+      type: object
+    RefreshOutput:
+      example:
+        accessToken: accessToken
+        refreshToken: refreshToken
+      properties:
+        accessToken:
+          description: 엑세스토큰
+          type: string
+        refreshToken:
+          description: 리프레시토큰
+          type: string
+      required:
+      - accessToken
+      - refreshToken
+      type: object
+    UserServiceType:
+      enum:
+      - 경기형
+      - w4c
+      - 음식배달
+      - EDI
+      - 서울형
+      - 증빙앱
+      - 대구형
+      - 인천형
+      type: string
+    UserService:
+      properties:
+        id:
+          description: 사용자서비스적용번호
+          type: number
+        serviceId:
+          description: 서비스 순번
+          type: number
+        type:
+          $ref: '#/components/schemas/UserServiceType'
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          description: 유저
+      required:
+      - id
+      - jangbu
+      - serviceId
+      - type
+      - user
+      type: object
+    Connect:
+      properties:
+        userService:
+          allOf:
+          - $ref: '#/components/schemas/UserService'
+          description: 유저별 사용하는 서비스
+      required:
+      - userService
+      type: object
+    PcClient:
+      properties:
+        pcId:
+          description: 클라이언트 PC의 UUID 정보
+          type: string
+        clientInfo:
+          description: 클라이언트 시스템 정보(json)
+          type: string
+        createdAt:
+          description: 생성일자
+          type: string
+      required:
+      - clientInfo
+      - createdAt
+      - pcId
+      type: object
+    PcClientError:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        appVersion: appVersion
+        clientId: 6.027456183070403
+        appName: appName
+        ip: ip
+        pcClient: ""
+        id: 0.8008281904610115
+        connectId: 1.4658129805029452
+        connect: ""
+        errorPath: errorPath
+      properties:
+        id:
+          description: 에러 순번
+          type: number
+        appName:
+          description: 어플리케이션 명
+          type: string
+        appVersion:
+          description: 어플리케이션 버전
+          type: string
+        ip:
+          description: IP 주소
+          type: string
+        errorPath:
+          description: 에러정보 S3 경로
+          type: string
+        clientId:
+          description: 클라이언트 번호
+          type: number
+        connectId:
+          description: 접속정보 고유번호
+          nullable: true
+          type: number
+        createdAt:
+          description: 생성일
+          format: date-time
+          type: string
+        connect:
+          allOf:
+          - $ref: '#/components/schemas/Connect'
+          description: 접속정보
+          nullable: true
+        pcClient:
+          allOf:
+          - $ref: '#/components/schemas/PcClient'
+          description: pc클라이언트
+          nullable: true
+      required:
+      - appName
+      - appVersion
+      - clientId
+      - createdAt
+      - errorPath
+      - id
+      - ip
+      type: object
+    GetErrorsResponse:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          appVersion: appVersion
+          clientId: 6.027456183070403
+          appName: appName
+          ip: ip
+          pcClient: ""
+          id: 0.8008281904610115
+          connectId: 1.4658129805029452
+          connect: ""
+          errorPath: errorPath
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          appVersion: appVersion
+          clientId: 6.027456183070403
+          appName: appName
+          ip: ip
+          pcClient: ""
+          id: 0.8008281904610115
+          connectId: 1.4658129805029452
+          connect: ""
+          errorPath: errorPath
+      properties:
+        items:
+          description: PC클라이언트 에러목록
+          items:
+            $ref: '#/components/schemas/PcClientError'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    GetCertOutput:
+      example:
+        privateKey: privateKey
+        extra: '{}'
+        cert: cert
+        passphrase: passphrase
+      properties:
+        cert:
+          description: 인증서 HEX
+          type: string
+        passphrase:
+          description: 비밀번호
+          type: string
+        privateKey:
+          description: 개인키 HEX
+          type: string
+        extra:
+          description: 확장정보
+          nullable: true
+          type: object
+      required:
+      - cert
+      - passphrase
+      - privateKey
+      type: object
+    GetJangbusOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          name: name
+          taxEmail: taxEmail
+          active: true
+          chargeJangbuPartnerships:
+          - unitPrice: 5.962133916683182
+            supplyPrice: 5.637376656633329
+            yearMonth: 6.027456183070403
+            applyCount: 1.4658129805029452
+            vatPrice: 2.3021358869347655
+            jangbuId: 0.8008281904610115
+          - unitPrice: 5.962133916683182
+            supplyPrice: 5.637376656633329
+            yearMonth: 6.027456183070403
+            applyCount: 1.4658129805029452
+            vatPrice: 2.3021358869347655
+            jangbuId: 0.8008281904610115
+          id: 0.8008281904610115
+          repId: repId
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          name: name
+          taxEmail: taxEmail
+          active: true
+          chargeJangbuPartnerships:
+          - unitPrice: 5.962133916683182
+            supplyPrice: 5.637376656633329
+            yearMonth: 6.027456183070403
+            applyCount: 1.4658129805029452
+            vatPrice: 2.3021358869347655
+            jangbuId: 0.8008281904610115
+          - unitPrice: 5.962133916683182
+            supplyPrice: 5.637376656633329
+            yearMonth: 6.027456183070403
+            applyCount: 1.4658129805029452
+            vatPrice: 2.3021358869347655
+            jangbuId: 0.8008281904610115
+          id: 0.8008281904610115
+          repId: repId
+      properties:
+        items:
+          description: 장부사 목록
+          items:
+            $ref: '#/components/schemas/Jangbu'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    RegisterJangbuInputDetailJangbu:
+      properties:
+        name:
+          description: 장부사명
+          type: string
+        taxEmail:
+          description: 세금계산서 이메일
+          type: string
+        partnershipDb:
+          description: 계좌통합 계산 필요 DB명
+          nullable: true
+          type: string
+        partnershipId:
+          description: 계좌통합 계산 필요 조회 아이디
+          nullable: true
+          type: string
+      required:
+      - name
+      - taxEmail
+      type: object
+    RegisterJangbuInputDetailUser:
+      properties:
+        loginId:
+          description: 로그인 아이디
+          type: string
+        password:
+          description: 로그인 패스워드
+          type: string
+        name:
+          description: 회원명
+          type: string
+        email:
+          description: 이메일
+          type: string
+        phone:
+          description: 휴대폰번호
+          type: string
+      required:
+      - email
+      - loginId
+      - name
+      - password
+      - phone
+      type: object
+    RegisterJangbuInput:
+      example:
+        serviceIds:
+        - 3
+        - 4
+        user: ""
+        jangbu: ""
+      properties:
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/RegisterJangbuInputDetailJangbu'
+          description: 등록할 장부사 정보
+        user:
+          allOf:
+          - $ref: '#/components/schemas/RegisterJangbuInputDetailUser'
+          description: 등록할 장부사 회원 정보
+        serviceIds:
+          description: 이용할 서비스 목록
+          example:
+          - 3
+          - 4
+          items:
+            enum:
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            type: number
+          type: array
+      required:
+      - jangbu
+      - serviceIds
+      - user
+      type: object
+    UpdateJangbuInput:
+      example:
+        name: name
+        taxEmail: taxEmail
+      properties:
+        name:
+          description: 장부사명
+          nullable: true
+          type: string
+        taxEmail:
+          description: 세금계산서 이메일
+          nullable: true
+          type: string
+      type: object
+    GetMembersOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          loginId: loginId
+          userLevel: 1.4658129805029452
+          phone: phone
+          name: name
+          jangbuId: 6.027456183070403
+          active: true
+          id: 0.8008281904610115
+          ceoName: ceoName
+          roleGroup: ""
+          email: email
+          jangbu: ""
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          loginId: loginId
+          userLevel: 1.4658129805029452
+          phone: phone
+          name: name
+          jangbuId: 6.027456183070403
+          active: true
+          id: 0.8008281904610115
+          ceoName: ceoName
+          roleGroup: ""
+          email: email
+          jangbu: ""
+      properties:
+        items:
+          description: 회원정보
+          items:
+            $ref: '#/components/schemas/User'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    FindMemberInput:
+      example:
+        loginId: loginId
+        findType: id
+        name: name
+        email: email
+      properties:
+        findType:
+          description: 계정찾기 타입 (아이디의 경우:id, 패스워드의 경우:password)
+          enum:
+          - id
+          - password
+          type: string
+        loginId:
+          description: (비밀번호 찾기의 경우에만 필수) 로그인 아이디
+          nullable: true
+          type: string
+        name:
+          description: (아이디 찾기의 경우에 필수) 이름
+          nullable: true
+          type: string
+        email:
+          description: (아이디 찾기 - 이메일로 찾을 경우에 필수) 이메일
+          nullable: true
+          type: string
+      required:
+      - findType
+      type: object
+    FindMemberOutput:
+      example:
+        loginId: loginId
+        recoveryUrl: recoveryUrl
+      properties:
+        loginId:
+          description: 로그인 아이디
+          nullable: true
+          type: string
+        recoveryUrl:
+          description: 패스워드 초기화 url
+          nullable: true
+          type: string
+      type: object
+    Recovery:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        expiredAt: 2000-01-23T04:56:07.000+00:00
+        usedAt: 2000-01-23T04:56:07.000+00:00
+        id: id
+        userSeq: 0.8008281904610115
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: 비밀번호 초기화키
+          type: string
+        userSeq:
+          description: 회원 번호
+          type: number
+        createdAt:
+          description: 생성일
+          format: date-time
+          type: string
+        updatedAt:
+          description: 수정일
+          format: date-time
+          type: string
+        expiredAt:
+          description: 만료일
+          format: date-time
+          type: string
+        usedAt:
+          description: 사용일
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - createdAt
+      - expiredAt
+      - id
+      - updatedAt
+      - userSeq
+      type: object
+    RegisterMemberInput:
+      example:
+        userLevel: 2
+        loginId: loginId
+        phone: phone
+        name: name
+        jangbuId: 0.8008281904610115
+        ceoName: ceoName
+        roleGroupCode: roleGroupCode
+        email: email
+      properties:
+        userLevel:
+          description: 사용자 유형
+          enum:
+          - 2
+          - 3
+          example: 2
+          type: number
+        jangbuId:
+          description: 장부사 순번 (관리자 회원의 경우에는 생략)
+          nullable: true
+          type: number
+        loginId:
+          description: 로그인 아이디
+          type: string
+        name:
+          description: 이름
+          type: string
+        ceoName:
+          description: 대표자명
+          type: string
+        email:
+          description: 이메일
+          type: string
+        phone:
+          description: 휴대폰번호
+          type: string
+        roleGroupCode:
+          description: 권한그룹코드
+          nullable: true
+          type: string
+      required:
+      - ceoName
+      - email
+      - loginId
+      - name
+      - phone
+      - userLevel
+      type: object
+    RegisterCustomerInput:
+      example:
+        userLevel: 1
+        loginId: loginId
+        phone: phone
+        name: name
+        jangbuId: 0.8008281904610115
+        ceoName: ceoName
+        roleGroupCode: roleGroupCode
+        serviceId: 6.027456183070403
+        email: email
+      properties:
+        userLevel:
+          description: 사용자 유형
+          enum:
+          - 1
+          example: 1
+          type: number
+        jangbuId:
+          description: 장부사 순번
+          nullable: true
+          type: number
+        loginId:
+          description: 로그인 아이디
+          type: string
+        name:
+          description: 이름
+          type: string
+        ceoName:
+          description: 대표자명
+          type: string
+        email:
+          description: 이메일
+          type: string
+        phone:
+          description: 휴대폰번호
+          type: string
+        roleGroupCode:
+          description: 권한그룹코드
+          nullable: true
+          type: string
+        serviceId:
+          description: 서비스 순번 (장부사 및 관리자 회원의 경우에는 생략)
+          type: number
+      required:
+      - ceoName
+      - email
+      - loginId
+      - name
+      - phone
+      - serviceId
+      - userLevel
+      type: object
+    UpdateMemberInput:
+      example:
+        password: password
+        phone: phone
+        name: name
+        active: true
+        email: email
+      properties:
+        name:
+          description: 회원명
+          nullable: true
+          type: string
+        password:
+          description: 패스워드
+          nullable: true
+          type: string
+        email:
+          description: 이메일
+          nullable: true
+          type: string
+        phone:
+          description: 휴대폰 (숫자만 입력)
+          nullable: true
+          type: string
+        active:
+          description: 이용여부
+          nullable: true
+          type: boolean
+      type: object
+    ResetPasswordInput:
+      example:
+        password: password
+      properties:
+        password:
+          description: (변경할) 패스워드
+          type: string
+      required:
+      - password
+      type: object
+    ResetPasswordOutput:
+      example:
+        recovery: ""
+      properties:
+        recovery:
+          allOf:
+          - $ref: '#/components/schemas/Recovery'
+          description: 비밀번호 초기화 정보
+      required:
+      - recovery
+      type: object
+    OsType:
+      enum:
+      - I
+      - A
+      type: string
+    CommonInfo:
+      properties:
+        accessIp:
+          description: 접속 IP
+          type: string
+        createdAt:
+          description: 생성일자
+          format: date-time
+          type: string
+        createdName:
+          description: 생성자
+          type: string
+        updatedAt:
+          description: 수정일자
+          format: date-time
+          type: string
+        updatedName:
+          description: 수정자
+          type: string
+        active:
+          description: 활성여부
+          type: boolean
+      required:
+      - accessIp
+      - active
+      - createdAt
+      - createdName
+      - updatedAt
+      - updatedName
+      type: object
+    AppVersion:
+      example:
+        description: description
+        id: 0.8008281904610115
+        version: version
+        url: url
+        info: ""
+      properties:
+        id:
+          description: 앱버전 순번
+          type: number
+        osType:
+          $ref: '#/components/schemas/OsType'
+        version:
+          description: 버전
+          type: string
+        url:
+          description: URL
+          type: string
+        description:
+          description: 설명
+          type: string
+        info:
+          allOf:
+          - $ref: '#/components/schemas/CommonInfo'
+          description: 상세정보
+      required:
+      - description
+      - id
+      - info
+      - osType
+      - url
+      - version
+      type: object
+    GetAppVersionsOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - description: description
+          id: 0.8008281904610115
+          version: version
+          url: url
+          info: ""
+        - description: description
+          id: 0.8008281904610115
+          version: version
+          url: url
+          info: ""
+      properties:
+        items:
+          description: 증빙앱 버전 목록
+          items:
+            $ref: '#/components/schemas/AppVersion'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    Message:
+      example:
+        subject: subject
+        viewedAt: '{}'
+        id: 0.8008281904610115
+        receivedAt: '{}'
+        content: content
+        info: ""
+      properties:
+        id:
+          description: 메시지아이디
+          type: number
+        subject:
+          description: 제목
+          type: string
+        content:
+          description: 내용
+          type: string
+        info:
+          allOf:
+          - $ref: '#/components/schemas/CommonInfo'
+          description: 상세정보
+        receivedAt:
+          description: 수신일
+          type: object
+        viewedAt:
+          description: 조회일
+          type: object
+      required:
+      - content
+      - id
+      - info
+      - subject
+      type: object
+    GetJangbuMessagesOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - subject: subject
+          viewedAt: '{}'
+          id: 0.8008281904610115
+          receivedAt: '{}'
+          content: content
+          info: ""
+        - subject: subject
+          viewedAt: '{}'
+          id: 0.8008281904610115
+          receivedAt: '{}'
+          content: content
+          info: ""
+      properties:
+        items:
+          description: 메시지 목록
+          items:
+            $ref: '#/components/schemas/Message'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    RegisterAppVersionInputInfo:
+      properties:
+        createdName:
+          description: 생성자
+          type: string
+      required:
+      - createdName
+      type: object
+    RegisterAppVersionInput:
+      example:
+        description: description
+        version: version
+        url: url
+        info: ""
+      properties:
+        version:
+          description: 버전명
+          type: string
+        osType:
+          $ref: '#/components/schemas/OsType'
+        url:
+          description: url
+          type: string
+        description:
+          description: 내용
+          type: string
+        info:
+          allOf:
+          - $ref: '#/components/schemas/RegisterAppVersionInputInfo'
+          description: 상세정보
+      required:
+      - description
+      - info
+      - osType
+      - url
+      - version
+      type: object
+    UpdateAppVersionInputInfo:
+      properties:
+        updatedName:
+          description: 생성자
+          type: string
+      required:
+      - updatedName
+      type: object
+    UpdateAppVersionInput:
+      example:
+        description: description
+        version: version
+        url: url
+        info: ""
+      properties:
+        version:
+          description: 버전명
+          type: string
+        osType:
+          $ref: '#/components/schemas/OsType'
+        url:
+          description: url
+          type: string
+        description:
+          description: 내용
+          type: string
+        info:
+          allOf:
+          - $ref: '#/components/schemas/UpdateAppVersionInputInfo'
+          description: 상세정보
+      required:
+      - info
+      type: object
+    Notice:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        partner: 전체
+        count: 6.027456183070403
+        id: 0.8008281904610115
+        title: title
+        content: content
+      properties:
+        id:
+          description: 공지사항 순번
+          type: number
+        title:
+          description: 공지사항 제목
+          type: string
+        content:
+          description: 공지사항 내용
+          type: string
+        count:
+          description: 공지사항 조회수
+          type: number
+        partner:
+          description: 공개범위
+          enum:
+          - 전체
+          - 뱅크다
+          - 카페24
+          type: string
+        createdAt:
+          description: 공지사항 생성일
+          format: date-time
+          type: string
+      required:
+      - content
+      - count
+      - createdAt
+      - id
+      - partner
+      - title
+      type: object
+    GetNotices:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          partner: 전체
+          count: 6.027456183070403
+          id: 0.8008281904610115
+          title: title
+          content: content
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          partner: 전체
+          count: 6.027456183070403
+          id: 0.8008281904610115
+          title: title
+          content: content
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/Notice'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    ShowType:
+      enum:
+      - "N"
+      type: string
+    RegisterNoticeInput:
+      example:
+        title: title
+        content: content
+      properties:
+        showService:
+          $ref: '#/components/schemas/ShowType'
+        title:
+          description: 공지제목
+          type: string
+        content:
+          description: 공지내용
+          type: string
+      required:
+      - content
+      - showService
+      - title
+      type: object
+    SearchRoleGroupOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - code: code
+          userLevel: 0.8008281904610115
+          name: name
+          active: true
+          roleList:
+          - {}
+          - {}
+          desc: desc
+        - code: code
+          userLevel: 0.8008281904610115
+          name: name
+          active: true
+          roleList:
+          - {}
+          - {}
+          desc: desc
+      properties:
+        items:
+          description: 권한 그룹
+          items:
+            $ref: '#/components/schemas/RoleGroup'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    RoleName:
+      enum:
+      - ac
+      - pc
+      - cu
+      - us
+      - "no"
+      - sy
+      - wo
+      - ad
+      - ap
+      type: string
+    RoleGroupMapping:
+      example:
+        permission: r
+      properties:
+        roleName:
+          $ref: '#/components/schemas/RoleName'
+        permission:
+          description: '접근 권한(읽기 : r, 쓰기 : w)'
+          enum:
+          - r
+          - w
+          nullable: false
+          type: string
+      required:
+      - permission
+      - roleName
+      type: object
+    CreateRoleGroupInput:
+      example:
+        code: code
+        userLevel: 0.8008281904610115
+        roles:
+        - permission: r
+        - permission: r
+        name: name
+        active: true
+        desc: desc
+      properties:
+        code:
+          description: 권한그룹 코드
+          nullable: false
+          type: string
+        name:
+          description: 권한그룹명
+          nullable: false
+          type: string
+        desc:
+          description: 권한그룹 설명
+          nullable: true
+          type: string
+        userLevel:
+          description: '회원 레벨(1: 고객, 2: 장부사, 3: 관리자)'
+          enum:
+          - 1
+          - 2
+          - 3
+          nullable: false
+          type: number
+        roles:
+          description: 권한 이름과 접근 권한 목록
+          items:
+            $ref: '#/components/schemas/RoleGroupMapping'
+          minLength: 1
+          type: array
+        active:
+          description: 활성 여부
+          type: boolean
+      required:
+      - active
+      - code
+      - name
+      - roles
+      - userLevel
+      type: object
+    UpdateRoleGroupInput:
+      example:
+        roles:
+        - permission: r
+        - permission: r
+        name: name
+        active: true
+        desc: desc
+      properties:
+        name:
+          description: 권한그룹명
+          type: string
+        desc:
+          description: 권한그룹 설명
+          nullable: true
+          type: string
+        roles:
+          description: 권한 이름과 접근 권한 목록
+          items:
+            $ref: '#/components/schemas/RoleGroupMapping'
+          minLength: 1
+          type: array
+        active:
+          description: 활성 여부
+          type: boolean
+      required:
+      - active
+      - name
+      - roles
+      type: object
+    ScrapingCode:
+      example:
+        createdAt: createdAt
+        codePath: codePath
+        active: true
+        serviceId: 0.8008281904610115
+        version: version
+        providerType: providerType
+      properties:
+        serviceId:
+          description: 서비스 번호
+          type: number
+        version:
+          description: 코드 버전
+          type: string
+        providerType:
+          description: 제공 서비스타입
+          type: string
+        codePath:
+          description: 코드 s3 경로
+          type: string
+        createdAt:
+          description: 생성일
+          type: string
+        active:
+          description: 활성여부
+          type: boolean
+      required:
+      - active
+      - codePath
+      - createdAt
+      - providerType
+      - serviceId
+      - version
+      type: object
+    GetScrapingCodesOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: createdAt
+          codePath: codePath
+          active: true
+          serviceId: 0.8008281904610115
+          version: version
+          providerType: providerType
+        - createdAt: createdAt
+          codePath: codePath
+          active: true
+          serviceId: 0.8008281904610115
+          version: version
+          providerType: providerType
+      properties:
+        items:
+          description: 스크랩핑 코드 목록
+          items:
+            $ref: '#/components/schemas/ScrapingCode'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    RegisterScrapingCodeVersionInput:
+      example:
+        serviceId: 0.8008281904610115
+        version: version
+        scrapingCode: scrapingCode
+        providerType: providerType
+      properties:
+        version:
+          description: 버전
+          type: string
+        serviceId:
+          description: 서비스 순번
+          type: number
+        scrapingCode:
+          description: 스크래핑 코드
+          type: string
+        providerType:
+          description: 제공타입
+          nullable: true
+          type: string
+      required:
+      - scrapingCode
+      - serviceId
+      - version
+      type: object
+    ServiceCategory:
+      enum:
+      - 회계업로드
+      - 계좌통합
+      - 음식배달
+      - EDI
+      type: string
+    ServiceType:
+      enum:
+      - 경기형
+      - 서울형
+      - w4c
+      - 계좌통합
+      - 음식배달
+      - EDI
+      - 증빙앱
+      - 대구형
+      - 인천형
+      type: string
+    Service:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        id: 0.8008281904610115
+        launchedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        id:
+          description: 서비스번호
+          type: number
+        category:
+          $ref: '#/components/schemas/ServiceCategory'
+        serviceName:
+          $ref: '#/components/schemas/ServiceType'
+        createdAt:
+          description: 생성일
+          format: date-time
+          type: string
+        launchedAt:
+          description: 서비스 런칭일
+          format: date-time
+          type: string
+      required:
+      - category
+      - createdAt
+      - id
+      - launchedAt
+      - serviceName
+      type: object
+    GetServicesOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          id: 0.8008281904610115
+          launchedAt: 2000-01-23T04:56:07.000+00:00
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          id: 0.8008281904610115
+          launchedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        items:
+          description: 서비스
+          items:
+            $ref: '#/components/schemas/Service'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    RegisterServiceInput:
+      example:
+        name: name
+        category: 회계업로드
+        launchedAt: "20210429"
+      properties:
+        name:
+          description: 서비스명
+          type: string
+        category:
+          description: 서비스 카테고리
+          enum:
+          - 회계업로드
+          - 계좌통합
+          - 음식배달
+          - EDI
+          type: string
+        launchedAt:
+          description: 서비스 런칭일자 (YYYYMMDD)
+          example: "20210429"
+          type: string
+      required:
+      - category
+      - name
+      type: object
+    UpdateServiceInput:
+      example:
+        name: 경기형
+        category: 계좌통합
+        launchedAt: "20210429"
+      properties:
+        category:
+          description: 서비스 카테고리
+          enum:
+          - 회계업로드
+          - 계좌통합
+          - 음식배달
+          - EDI
+          example: 계좌통합
+          type: string
+        name:
+          description: 서비스 이름
+          example: 경기형
+          type: string
+        launchedAt:
+          description: 서비스 런칭일자 (YYYYMMDD)
+          example: "20210429"
+          type: string
+      required:
+      - category
+      - name
+      type: object
+    ProcessFlag:
+      enum:
+      - 접수
+      - 승인
+      - 진행
+      - 실패
+      - 접수실패
+      - 성공
+      - 자동취소
+      - 수동취소
+      - 중복취소
+      type: string
+    WorkRequestType:
+      enum:
+      - budget_cis_send
+      - budget_delete_upload
+      - budget_upload
+      - slip_bill_delete_upload
+      - slip_bill_upload
+      - slip_cis_send
+      - slip_detail_upload
+      - slip_delete_upload
+      - slip_upload
+      - slip_upload_monthly
+      - slip_split_delete_upload
+      - slip_voucher_upload
+      - food_delivery
+      - all
+      - health
+      - pension
+      - employment
+      type: string
+    WorkDetail:
+      properties:
+        workId:
+          description: 업무 순번
+          type: number
+        code:
+          description: 접수코드(장부사 리턴값)
+          type: string
+        version:
+          description: 버전
+          nullable: true
+          type: string
+        type:
+          $ref: '#/components/schemas/WorkRequestType'
+        count:
+          description: 접수된 건수
+          nullable: true
+          type: number
+        transAt:
+          description: 요청시간
+          nullable: true
+          type: string
+        memo:
+          description: 내용
+          nullable: true
+          type: string
+        providerType:
+          description: 제공타입(음식배달 등)
+          nullable: true
+          type: string
+        bizManageNumber:
+          description: 사업장관리번호(EDI)
+          nullable: true
+          type: number
+        yearMonth:
+          description: 조회대상년월(EDI)
+          nullable: true
+          type: number
+        s3Data:
+          description: s3에 보관된 접수data
+          nullable: true
+          type: string
+        subCode:
+          description: 기타정보(w4c)
+          nullable: true
+          type: string
+      required:
+      - code
+      - workId
+      type: object
+    WorkResultDetail:
+      properties:
+        successCount:
+          description: 성공건수
+          type: number
+        failCount:
+          description: 실패건수
+          type: number
+        resultMessage:
+          description: 스크래핑결과 내용
+          type: string
+        resultPath:
+          description: 스크래핑 결과 S3경로
+          type: string
+      required:
+      - failCount
+      - resultMessage
+      - resultPath
+      - successCount
+      type: object
+    WorkResult:
+      properties:
+        workResultDetail:
+          allOf:
+          - $ref: '#/components/schemas/WorkResultDetail'
+          description: 스크래핑 결과 상세정보
+          nullable: true
+      type: object
+    Work:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        jangbuId: 5.962133916683182
+        id: 0.8008281904610115
+        serviceId: 6.027456183070403
+        userId: 1.4658129805029452
+        workDetail: ""
+        user: ""
+        workResult: ""
+        apiId: 5.637376656633329
+        jangbu: ""
+      properties:
+        id:
+          description: 업무 순번
+          type: number
+        serviceId:
+          description: 서비스 순번
+          type: number
+        userId:
+          description: 회원 순번
+          type: number
+        jangbuId:
+          description: 장부사 순번
+          type: number
+        status:
+          $ref: '#/components/schemas/ProcessFlag'
+        apiId:
+          description: api 순번
+          nullable: true
+          type: number
+        createdAt:
+          description: 생성일
+          format: date-time
+          type: string
+        workDetail:
+          allOf:
+          - $ref: '#/components/schemas/WorkDetail'
+          description: 업무 상세정보
+          nullable: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          description: 회원정보
+          nullable: true
+        jangbu:
+          allOf:
+          - $ref: '#/components/schemas/Jangbu'
+          description: 장부사정보
+          nullable: true
+        workResult:
+          allOf:
+          - $ref: '#/components/schemas/WorkResult'
+          description: 스크래핑 결과
+          nullable: true
+      required:
+      - createdAt
+      - id
+      - jangbuId
+      - serviceId
+      - status
+      - userId
+      type: object
+    GetWorksOutput:
+      example:
+        meta: ""
+        links: ""
+        items:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          jangbuId: 5.962133916683182
+          id: 0.8008281904610115
+          serviceId: 6.027456183070403
+          userId: 1.4658129805029452
+          workDetail: ""
+          user: ""
+          workResult: ""
+          apiId: 5.637376656633329
+          jangbu: ""
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          jangbuId: 5.962133916683182
+          id: 0.8008281904610115
+          serviceId: 6.027456183070403
+          userId: 1.4658129805029452
+          workDetail: ""
+          user: ""
+          workResult: ""
+          apiId: 5.637376656633329
+          jangbu: ""
+      properties:
+        items:
+          description: 업무 목록
+          items:
+            $ref: '#/components/schemas/Work'
+          readOnly: true
+          type: array
+        meta:
+          allOf:
+          - $ref: '#/components/schemas/PagingMeta'
+          description: 페이징 메타정보
+          readOnly: true
+        links:
+          allOf:
+          - $ref: '#/components/schemas/PagingLinks'
+          description: 페이징 링크정보
+          readOnly: true
+      required:
+      - items
+      - links
+      - meta
+      type: object
+    GetWorkS3DataResponse:
+      example:
+        log: log
+      properties:
+        log:
+          description: 로그정보
+          type: string
+      required:
+      - log
+      type: object
+    SlipUploadVoucher:
+      properties:
+        url:
+          description: url정보
+          nullable: true
+          type: string
+        filename:
+          description: 파일명
+          nullable: true
+          type: string
+      type: object
+    SlipUpload:
+      properties:
+        TRANS_DATETIME:
+          description: 거래일시(YYYYMMDD)
+          type: string
+        BILL_DATE:
+          description: 일자(YYYYMMDD)
+          type: string
+        TRANS_DATE:
+          description: 거래일자(YYYYMMDD)
+          type: string
+        ESTI_CODE:
+          description: 과목코드
+          type: string
+        ESTI_INOUT:
+          description: 입출구분(I:세입, O:세출)
+          type: string
+        BILL_MEMO:
+          description: 전표메모(공란)
+          type: string
+        BILL_BIGO:
+          description: 전표비고
+          type: string
+        BILL_SUPPORT_AT:
+          description: 보조금여부(Y, N)
+          type: string
+        BILL_NURI_AT:
+          description: 누리지원여부(Y, N)
+          type: string
+        TRANS_GB:
+          description: 거래내역 입출구분 (I/O)
+          type: string
+        TRANS_MONEY:
+          description: 거래금액
+          type: string
+        TRANS_MONEY_IN:
+          description: 입금액(출금거래시 0)
+          type: string
+        TRANS_MONEY_OUT:
+          description: 출금액(입금거래시 0)
+          type: string
+        TRANS_REMAIN:
+          description: 거래후 잔액
+          type: string
+        TRANS_MEMO:
+          description: '거래내용(적요) '
+          type: string
+        SETLE_MTHD:
+          description: 결제방식(100~700)
+          type: string
+        VOUCHER:
+          description: 증빙 목록
+          items:
+            $ref: '#/components/schemas/SlipUploadVoucher'
+          nullable: true
+          type: array
+        ESTI_IDX:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_NAME:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_DEPTH:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_NAME_1:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_NAME_2:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_NAME_3:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        BILL_SUBCODE:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_DISPLAY:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_GB:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_PART:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_SUB_NM:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+        ESTI_SUB_YN:
+          description: (slip_delete_upload의 경우 존재함)
+          nullable: true
+          type: string
+      required:
+      - BILL_BIGO
+      - BILL_DATE
+      - BILL_MEMO
+      - BILL_NURI_AT
+      - BILL_SUPPORT_AT
+      - ESTI_CODE
+      - ESTI_INOUT
+      - SETLE_MTHD
+      - TRANS_DATE
+      - TRANS_DATETIME
+      - TRANS_GB
+      - TRANS_MEMO
+      - TRANS_MONEY
+      - TRANS_MONEY_IN
+      - TRANS_MONEY_OUT
+      - TRANS_REMAIN
+      type: object
+    SlipCisSend:
+      properties:
+        schYearMonth:
+          description: 회계보고 년월(YYYYMM) (전월 & 당월 데이터만 허용)
+          type: string
+      required:
+      - schYearMonth
+      type: object
+    BudgetUploadItem:
+      properties:
+        ESTI_OUT_NAME:
+          description: 산출기초명
+          type: string
+        ESTI_OUT_MONEY:
+          description: 단가
+          type: string
+        ESTI_OUT_BASICNUM1:
+          description: 수량1 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT1:
+          description: 단위1 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM2:
+          description: 수량2 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT2:
+          description: 단위2 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM3:
+          description: 수량3 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT3:
+          description: 단위3 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM4:
+          description: 수량4 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT4:
+          description: 단위4 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM5:
+          description: 수량5 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT5:
+          description: 단위5 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM6:
+          description: 수량6 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT6:
+          description: 단위6 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM7:
+          description: 수량7 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT7:
+          description: 단위7 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM8:
+          description: 수량8 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT8:
+          description: 단위9 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICNUM9:
+          description: 수량9 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_BASICTEXT9:
+          description: 단위9 (없을시 생략)
+          nullable: true
+          type: string
+        ESTI_OUT_TOTMONEY:
+          description: 합계(산출액)
+          type: number
+      required:
+      - ESTI_OUT_MONEY
+      - ESTI_OUT_NAME
+      - ESTI_OUT_TOTMONEY
+      type: object
+    BudgetUpload:
+      properties:
+        ESTI_DISPLAY:
+          description: 과목코드
+          type: string
+        ESTI_INOUT:
+          description: 입출구분(I:세입, O:세출)
+          type: string
+        TOTAL_MONEY:
+          description: 예산합계
+          type: string
+        budget_item:
+          description: 예산내역 목록
+          items:
+            $ref: '#/components/schemas/BudgetUploadItem'
+          type: array
+      required:
+      - ESTI_DISPLAY
+      - ESTI_INOUT
+      - TOTAL_MONEY
+      - budget_item
+      type: object
+    BudgetCisSend:
+      properties:
+        ESTI_YEAR:
+          description: 회계연도
+          type: string
+        ESTIM_NAME:
+          description: 예산등록 대상
+          type: string
+      required:
+      - ESTIM_NAME
+      - ESTI_YEAR
+      type: object
+    Function:
+      properties: {}
+      type: object
+    SlipSplitDeleteUploadBank:
+      properties:
+        TRANS_DATETIME:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 거래일시(YYYYMMDD)
+          nullable: true
+        TRANS_DATE:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 일자(YYYYMMDD)
+          nullable: true
+        TRANS_GB:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 거래내역 입출구분 (I/O)
+          nullable: true
+        TRANS_MONEY:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 거래금액
+          nullable: true
+        TRANS_MONEY_IN:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 입금액(출금거래시 0)
+          nullable: true
+        TRANS_MONEY_OUT:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 출금액(입금거래시 0)
+          nullable: true
+        TRANS_REMAIN:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 거래후 잔액
+          nullable: true
+        TRANS_MEMO:
+          allOf:
+          - $ref: '#/components/schemas/Function'
+          description: 거래내용(적요)
+          nullable: true
+      type: object
+    SlipSplitDeleteUploadSlip:
+      properties:
+        BILL_DATE:
+          description: 일자(YYYYMMDD)
+          type: string
+        BILL_ORDER_DATE:
+          type: string
+        ESTI_CODE:
+          description: 과목코드
+          type: string
+        ESTI_INOUT:
+          description: 입출구분(I:세입, O:세출)
+          type: string
+        BILL_MONEY:
+          type: string
+        BILL_MEMO:
+          description: 전표메모(공란)
+          type: string
+        BILL_BIGO:
+          description: 비고내용
+          type: string
+        BILL_SUPPORT_AT:
+          type: string
+        BILL_NURI_AT:
+          type: string
+        SETLE_MTHD:
+          type: string
+        ESTI_IDX:
+          type: string
+        ESTI_NAME:
+          type: string
+        ESTI_DEPTH:
+          type: string
+        ESTI_NAME_1:
+          type: string
+        ESTI_NAME_2:
+          type: string
+        ESTI_NAME_3:
+          type: string
+      required:
+      - BILL_BIGO
+      - BILL_DATE
+      - BILL_MEMO
+      - BILL_MONEY
+      - BILL_NURI_AT
+      - BILL_ORDER_DATE
+      - BILL_SUPPORT_AT
+      - ESTI_CODE
+      - ESTI_DEPTH
+      - ESTI_IDX
+      - ESTI_INOUT
+      - ESTI_NAME
+      - ESTI_NAME_1
+      - ESTI_NAME_2
+      - ESTI_NAME_3
+      - SETLE_MTHD
+      type: object
+    SlipSplitDeleteUpload:
+      properties:
+        bank:
+          allOf:
+          - $ref: '#/components/schemas/SlipSplitDeleteUploadBank'
+        slip:
+          items:
+            $ref: '#/components/schemas/SlipSplitDeleteUploadSlip'
+          type: array
+      required:
+      - bank
+      - slip
+      type: object
+    SlipUploadMonthly:
+      properties:
+        BCNC_NM:
+          type: string
+        CR_TMM_OCUR_AMT:
+          type: string
+        ACCT_NUMBER:
+          type: string
+        ACC_NM:
+          type: string
+        REMK:
+          type: string
+        FDSRC_NM:
+          type: string
+        BSNS_NM:
+          type: string
+        ACCT_MNGT_NM:
+          type: string
+        DFRT_DE:
+          type: string
+        DR_TMM_OCUR_AMT:
+          type: string
+        OPNT_ACC_NM:
+          type: string
+      required:
+      - ACCT_MNGT_NM
+      - ACCT_NUMBER
+      - ACC_NM
+      - BCNC_NM
+      - BSNS_NM
+      - CR_TMM_OCUR_AMT
+      - DFRT_DE
+      - DR_TMM_OCUR_AMT
+      - FDSRC_NM
+      - OPNT_ACC_NM
+      - REMK
+      type: object
+    GetWorkS3DetailLogResponse:
+      example:
+        failCount: 6.027456183070403
+        successCount: 0.8008281904610115
+        logs:
+        - ""
+        - ""
+      properties:
+        logs:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/SlipUpload'
+            - $ref: '#/components/schemas/SlipCisSend'
+            - $ref: '#/components/schemas/BudgetUpload'
+            - $ref: '#/components/schemas/BudgetCisSend'
+            - $ref: '#/components/schemas/SlipSplitDeleteUpload'
+            - $ref: '#/components/schemas/SlipUploadMonthly'
+          type: array
+        successCount:
+          description: 성공건수
+          nullable: true
+          type: number
+        failCount:
+          description: 실패건수
+          nullable: true
+          type: number
+        type:
+          $ref: '#/components/schemas/WorkRequestType'
+      required:
+      - logs
+      - type
+      type: object
+  securitySchemes:
+    bearer:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
