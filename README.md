@@ -27,6 +27,26 @@ npm install -D @openapitools/openapi-generator-cli
 yarn add -D @openapitools/openapi-generator-cli
 ```
 
+### Example
+- typescript
+```ts
+const nodeApi = new DefaultApi();
+
+nodeApi.basePath = "http://localhost:3001";
+nodeApi.defaultHeaders = {
+    Authorization: `Bearer XXXXX`,
+};
+
+nodeApi
+    .jangbuControllerGetJangbus(1, 15, undefined, undefined, "gn")
+    .then((res) => {
+        console.log("RES: ", res);
+        console.log("RES: ", res.body.items);
+    })
+    .catch((err) => {
+        console.log("ERROR: ", err);
+    });
+```
 
 ### Sample
 - [java](https://github.com/rhkdgns95/OpenApiTools-sample/tree/master/sample-java)
