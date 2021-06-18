@@ -25,11 +25,11 @@ yarn add -D @openapitools/openapi-generator-cli
 
 
 ### Sample
-- java
-- php
-- typescript-fetch
-- typescript-node
-- etc...
+- [java](https://github.com/rhkdgns95/OpenApiTools-sample/tree/master/sample-java)
+- [php](https://github.com/rhkdgns95/OpenApiTools-sample/tree/master/sample-php)
+- [typescript-fetch](https://github.com/rhkdgns95/OpenApiTools-sample/tree/master/sample-typescript-fetch)
+- [typescript-node](https://github.com/rhkdgns95/OpenApiTools-sample/tree/master/sample-typescript-node)
+
 
 
 ### Refs
