@@ -3,7 +3,7 @@
 
 
 ### Command
-- yarn openapi-generator-cli generate -i {$_DOC} -g {$_LANG} -o {$_OUTDIR} {$_OPTIONS...}
+- yarn openapi-generator-cli generate -i `$_DOC` -g `$_LANG` -o `$_OUTDIR`  `$_OTHER_OPTIONS...`
 ```bash
 # typescript-node
 yarn openapi-generator-cli generate -i http://localhost:3001/public/apidoc-json -g typescript-node -o ./sample-typescript-node --skip-validate-spec
